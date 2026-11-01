@@ -1,0 +1,12 @@
+{
+  "appId": "br.com.jl.contasocios",
+  "appName": "Conta Sócios",
+  "webDir": "www",
+  "server": {
+    "url": "https://jonata-83.github.io/conta-socios/",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": true
+  }
+}
