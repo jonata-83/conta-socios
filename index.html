@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="pt-BR">
 <head>
@@ -390,7 +391,17 @@ function salvarConfig(){
 }
 
 /* ---------- Backup ---------- */
-function baixar(nome,conteudo,tipo){
+async function baixar(nome,conteudo,tipo){
+  // Dentro do APK (Capacitor): grava o arquivo e abre o compartilhar (WhatsApp, Drive, Arquivos...)
+  const Cap=window.Capacitor,P=Cap&&Cap.Plugins||{};
+  if(Cap&&Cap.isNativePlatform&&Cap.isNativePlatform()&&P.Filesystem&&P.Share){
+    try{
+      await P.Filesystem.writeFile({path:nome,data:conteudo,directory:'CACHE',encoding:'utf8'});
+      const r=await P.Filesystem.getUri({path:nome,directory:'CACHE'});
+      await P.Share.share({files:[r.uri],title:nome});
+    }catch(e){if(!/cancel/i.test(String(e&&e.message||e)))aviso('Não foi possível compartilhar o arquivo.')}
+    return;
+  }
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([conteudo],{type:tipo}));
   a.download=nome;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},500);
 }
